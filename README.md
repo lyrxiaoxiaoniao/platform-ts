@@ -107,3 +107,45 @@ const asyncComponent = Loadable({
         ]
     }
 ```
+
+### 路径优化
+
+> 第一种是直接在 webpack.resolve.alias 中进行路径配置,应为使用的了typescript还需要在tsconfig.json配置baseUrl,paths
+
+```
+    // ----------- webpack.config.js
+
+    resolve: {
+        alias: {
+            .....
+
+            // 配置路径，tsconfig.json 文件还需要配置paths
+            "@components":  path.join(__dirname, '../', 'src/components'),
+            "@utils": path.join(__dirname, '../', 'src/utils'),
+            "@server": path.join(__dirname, '../', 'src/server'),
+            "@router": path.join(__dirname, '../', 'src/router'),
+            "@assets": path.join(__dirname, '../', 'src/assets'),
+            "@store": path.join(__dirname, '../', 'src/store')
+        },
+    }
+
+    // ---------- tsconfig.json
+
+    {
+        "compilerOptions": {
+            ......
+            
+            "baseUrl": "./src",
+            /* Base directory to resolve non-absolute module names. */
+            "paths": {
+            "@components/*": ["components/*"],
+            "@utils/*": ["utils/*"],
+            "@server/*": ["server/*"],
+            "@router/*": ["router/*"],
+            "@assets/*": ["assets/*"],
+            "@store/*": ["store/*"]
+            },
+            "jsx": "react"
+        },
+    }
+```

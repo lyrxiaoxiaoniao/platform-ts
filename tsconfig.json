@@ -22,6 +22,16 @@
     "noEmit": true,
     "experimentalDecorators": true,
     "noUnusedLocals": true,
+    "baseUrl": "./src",
+    /* Base directory to resolve non-absolute module names. */
+    "paths": {
+      "@components/*": ["components/*"],
+      "@utils/*": ["utils/*"],
+      "@server/*": ["server/*"],
+      "@router/*": ["router/*"],
+      "@assets/*": ["assets/*"],
+      "@store/*": ["store/*"]
+    },
     "jsx": "react"
   },
   "include": [

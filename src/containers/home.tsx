@@ -2,6 +2,7 @@ import React, { Component } from 'react'
 import { Layout, Menu, Icon } from 'antd'
 import'./index.scss'
 const { Header, Sider, Content } = Layout
+import localStorage from '@utils/localStorage'
 
 class SiderDemo extends Component {
   state = {
@@ -15,6 +16,7 @@ class SiderDemo extends Component {
   }
 
   render() {
+    console.log(localStorage.get('test'), '11111')
     return (
       <Layout className='layout'>
         <Sider trigger={null} collapsible collapsed={this.state.collapsed}>
