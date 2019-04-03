@@ -1,44 +1,109 @@
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+## platform-ts
 
-## Available Scripts
+### 创建
 
-In the project directory, you can run:
+> [`npx ceate-react-app name --typescript`](https://www.html.cn/create-react-app/docs/adding-typescript/)
 
-### `npm start`
+### 添加 mobx, mobx-react-devtools mobx-react
 
-Runs the app in the development mode.<br>
-Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
+> 选择 mobx 而不选择 redux 原因：mobx 完美支持 typescript, 同时 mobx 类似 vuex 使用方便，代码量少，对于前端数据流不复杂的更加清晰方便维护；当然 redux 也有自己的优势可以通过中间件完成各种复杂任务的处理
 
-The page will reload if you make edits.<br>
-You will also see any lint errors in the console.
+> `yarn add mobx mobx-react` `yarn add mobx mobx-react-devtools -D`
 
-### `npm test`
+```
+    import React from 'react'
+    import ReactDOM from 'react-dom'
+    import { configure } from 'mobx'
+    import { Provider } from 'mobx-react'
+    import DevTools from 'mobx-react-devtools'
+    import store from './store'
+    import App from './App'
+    // 这里面的configure({enforceActions: 'observed'})
+    // 用于限制被observable(也就是store中添加了@observable)的数据的修改方式，让其只能添加了@action的函数中进行修改。
+    configure({ enforceActions: 'observed' })
+    ReactDOM.render(
+    <>
+        <Provider {...store}>
+        <App />
+        </Provider>
+        {process.env.NODE_ENV === 'development' ? <DevTools /> : null}
+    </>,
+    document.getElementById('root')
+    )
 
-Launches the test runner in the interactive watch mode.<br>
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+```
 
-### `npm run build`
+### 添加路由 react-router-dom mobx-react-router @types/react-router-dom , mobx-react-router 保持 mobx 状态与 router 同步在一个 RouterStore
 
-Builds the app for production to the `build` folder.<br>
-It correctly bundles React in production mode and optimizes the build for the best performance.
+> `yarn add react-router-dom mobx-react-router` `yarn add @types/react-router-dom -D`
 
-The build is minified and the filenames include the hashes.<br>
-Your app is ready to be deployed!
+```
+    import createHashHistory from 'history/createHashHistory'
+    import { RouterStore, syncHistoryWithStore } from 'mobx-react-router'
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+    const hashHistory = createHashHistory()
+    const history = syncHistoryWithStore(hashHistory, new RouterStore())
+```
 
-### `npm run eject`
+> 完整的配置
 
-**Note: this is a one-way operation. Once you `eject`, you can’t go back!**
+```
+    import React from 'react'
+    import ReactDOM from 'react-dom'
+    import { configure } from 'mobx'
+    import { Provider } from 'mobx-react'
+    import DevTools from 'mobx-react-devtools'
+    import createHashHistory from 'history/createHashHistory'
+    import { RouterStore, syncHistoryWithStore } from 'mobx-react-router'
+    import { Router } from 'react-router'
+    import store from './store'
+    import App from './App'
+    const routerStore = new RouterStore()
+    const hashHistory = createHashHistory()
+    const history = syncHistoryWithStore(hashHistory, routerStore)
+    // 这里面的configure({enforceActions: 'observed'})
+    // 用于限制被observable(也就是store中添加了@observable)的数据的修改方式，让其只能添加了@action的函数中进行修改。
+    configure({ enforceActions: 'observed' })
+    ReactDOM.render(
+    <>
+        <Provider {...store}>
+        <Router history={history}>
+            <App />
+        </Router>
+        </Provider>
+        {process.env.NODE_ENV === 'development' ? <DevTools /> : null}
+    </>,
+    document.getElementById('root')
+    )
+```
 
-If you aren’t satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+### `code splitting`使用`react-loadable`进行分包，按需加载。`yarn add react-loadable` `yarn add @types/react-loadable`
 
-Instead, it will copy all the configuration files and the transitive dependencies (Webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you’re on your own.
+> 这里说一句 react 16.6 中有替代这项功能的核心 api；React.Suspense 与 React.lazy 配合完成`code splitting`,这里推荐文章[Migrate from react-loadable to React.Suspense](https://objectpartners.com/2018/12/05/migrate-from-react-loadable-to-react-suspense/), 还有一种 [react-router v4 --- code splitting](https://reacttraining.com/react-router/web/guides/code-splitting)
 
-You don’t have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn’t feel obligated to use this feature. However we understand that this tool wouldn’t be useful if you couldn’t customize it when you are ready for it.
+```
+import Loadable from "react-loadable"
 
-## Learn More
+const asyncComponent = Loadable({
+  loader: () => import(/* webpackChunkName: "asyncComponent" */ './asyncComponent'),
+  loading: Loading,
+  delay: 200
+});
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+```
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+### webpack 配置 react-hot-loader 热加载局部更新 `yarn add react-hot-loader -D`
+
+```
+    //  package.json
+    .....
+
+    "babel": {
+        "presets": [
+            "react-app"
+        ],
+        "plugins": [
+            "react-hot-loader/babel"
+        ]
+    }
+```
