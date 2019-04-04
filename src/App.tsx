@@ -1,16 +1,11 @@
 import React, { Component } from 'react'
-import './App.css'
 import RouterMap from './router/index'
-// import { Link } from 'react-router-dom'
 
 class App extends Component {
   render() {
     return (
-      <div className='App'>
+      <div style={{width:'100%',height: '100%'}}>
         <RouterMap />
-        {/* <Link className='App-link' to='/home'>
-          Learn React
-        </Link> */}
       </div>
     )
   }

@@ -26,6 +26,7 @@
     /* Base directory to resolve non-absolute module names. */
     "paths": {
       "@components/*": ["components/*"],
+      "@containers/*": ["containers/*"],
       "@utils/*": ["utils/*"],
       "@server/*": ["server/*"],
       "@router/*": ["router/*"],

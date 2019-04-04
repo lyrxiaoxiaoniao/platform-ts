@@ -267,6 +267,7 @@ module.exports = function(webpackEnv) {
         'react-native': 'react-native-web',
         // 配置路径，tsconfig.json 文件还需要配置paths
         "@components":  path.join(__dirname, '../', 'src/components'),
+        "@containers":  path.join(__dirname, '../', 'src/containers'),
         "@utils": path.join(__dirname, '../', 'src/utils'),
         "@server": path.join(__dirname, '../', 'src/server'),
         "@router": path.join(__dirname, '../', 'src/router'),
