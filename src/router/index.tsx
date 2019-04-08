@@ -8,16 +8,14 @@ export const routerList: Array<any> = [
     component: Loadable({
       loader: () => import('@containers/Home'),
       loading
-    }),
-    exact: false
+    })
   },
   {
     path: '/app/article',
     component: Loadable({
       loader: () => import('@containers/Article'),
       loading
-    }),
-    exact: false
+    })
   }
 ]
 
@@ -27,16 +25,14 @@ const routerMap: any[] = [
     component: Loadable({
       loader: () => import('@containers/Layout'),
       loading
-    }),
-    exact: false
+    })
   },
   {
     path: '/login',
     component: Loadable({
       loader: () => import('@containers/Login'),
       loading
-    }),
-    exact: false
+    })
   }
 ]
 
@@ -52,7 +48,7 @@ export default () => (
         {routerMap.map(item => (
           <Route
             key={item.path}
-            exact={item.exact}
+            exact={item.exact || false}
             path={item.path}
             component={item.component}
           />

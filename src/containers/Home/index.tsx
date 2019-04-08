@@ -2,51 +2,8 @@ import React, { Component } from 'react'
 
 class Home extends Component {
   public render() {
-    console.log(2222222222222)
     return (
       <div>
-        <p><i>home/page</i></p>
-        <p><i>home/page</i></p>
-        <p><i>home/page</i></p>
-        <p><i>home/page</i></p>
-        <p><i>home/page</i></p>
-        <p><i>home/page</i></p>
-        <p><i>home/page</i></p>
-        <p><i>home/page</i></p>
-        <p><i>home/page</i></p>
-        <p><i>home/page</i></p>
-        <p><i>home/page</i></p>
-        <p><i>home/page</i></p>
-        <p><i>home/page</i></p>
-        <p><i>home/page</i></p>
-        <p><i>home/page</i></p>
-        <p><i>home/page</i></p>
-        <p><i>home/page</i></p>
-        <p><i>home/page</i></p>
-        <p><i>home/page</i></p>
-        <p><i>home/page</i></p>
-        <p><i>home/page</i></p>
-        <p><i>home/page</i></p>
-        <p><i>home/page</i></p>
-        <p><i>home/page</i></p>
-        <p><i>home/page</i></p>
-        <p><i>home/page</i></p>
-        <p><i>home/page</i></p>
-        <p><i>home/page</i></p>
-        <p><i>home/page</i></p>
-        <p><i>home/page</i></p>
-        <p><i>home/page</i></p>
-        <p><i>home/page</i></p>
-        <p><i>home/page</i></p>
-        <p><i>home/page</i></p>
-        <p><i>home/page</i></p>
-        <p><i>home/page</i></p>
-        <p><i>home/page</i></p>
-        <p><i>home/page</i></p>
-        <p><i>home/page</i></p>
-        <p><i>home/page</i></p>
-        <p><i>home/page</i></p>
-        <p><i>home/page</i></p>
         <p><i>home/page</i></p>
         <p><i>home/page</i></p>
         <p><i>home/page</i></p>
