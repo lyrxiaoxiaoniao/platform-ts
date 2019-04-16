@@ -58,6 +58,9 @@ class LocStorage {
     remove(key:string) {
         this.storage.removeItem(this.prefix + key)
     }
+    clear() {
+        this.storage.clear()
+    }
     each(fun:(key:string,val:any)=>void) {
         let data = this.storage
         let val = null

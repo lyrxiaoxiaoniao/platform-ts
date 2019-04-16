@@ -271,6 +271,7 @@ module.exports = function(webpackEnv) {
         "@utils": path.join(__dirname, '../', 'src/utils'),
         "@server": path.join(__dirname, '../', 'src/server'),
         "@router": path.join(__dirname, '../', 'src/router'),
+        "@models": path.join(__dirname, '../', 'src/models'),
         "@assets": path.join(__dirname, '../', 'src/assets'),
         "@store": path.join(__dirname, '../', 'src/store')
       },

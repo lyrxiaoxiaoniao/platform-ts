@@ -22,11 +22,6 @@ class Login extends ComponentExt<any, any> {
       this.props.history.push('/app/home')
     });
   }
-  // componentDidMount() {
-  //   this.$Http.get('/login').then(res => {
-  //     console.log(res)
-  //   })
-  // }
   render() {
     const {
       getFieldDecorator, getFieldsError, getFieldError, isFieldTouched,

@@ -21,5 +21,8 @@ class Session {
         }
         return typeof fun === "function" ? fun.call(this, value) : value
     }
+    public clear() {
+        this.session.clear()
+    }
 }
 export default new Session();

@@ -1,3 +1,10 @@
+import _localStorage from './localStorage'
+import _sessionStorage from './sessionStorage'
+
+export const _storage = {
+  _localStorage,
+  _sessionStorage
+}
 /**
  * Throttle
  * @param fn {func}
@@ -5,25 +12,25 @@
  */
 
 export const Throttle = (fn: any, delay = 500) => {
-    const self = fn
-    const isFirst = false
-    let timer: any = null
+  const self = fn
+  const isFirst = false
+  let timer: any = null
 
-    return (...rest: any[]) => {
-        if (!isFirst) {
-            self(...rest)
-        }
-
-        if (timer) {
-            return
-        }
-
-        timer = setTimeout(() => {
-            clearTimeout(timer)
-            timer = null
-            self(...rest)
-        }, delay)
+  return (...rest: any[]) => {
+    if (!isFirst) {
+      self(...rest)
     }
+
+    if (timer) {
+      return
+    }
+
+    timer = setTimeout(() => {
+      clearTimeout(timer)
+      timer = null
+      self(...rest)
+    }, delay)
+  }
 }
 
 /**
@@ -33,11 +40,11 @@ export const Throttle = (fn: any, delay = 500) => {
  * @returns {Function}
  */
 export const debounce = (method: any, delay = 50) => {
-    let timer: any = null
-    return (...rest: any[]) => {
-        timer && clearTimeout(timer)
-        timer = setTimeout(() => {
-            method(...rest)
-        }, delay)
-    }
+  let timer: any = null
+  return (...rest: any[]) => {
+    timer && clearTimeout(timer)
+    timer = setTimeout(() => {
+      method(...rest)
+    }, delay)
+  }
 }
