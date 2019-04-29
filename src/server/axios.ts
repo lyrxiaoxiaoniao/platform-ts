@@ -27,7 +27,7 @@ const getAxiosInstance = (): AxiosInstance => {
             // headers,
             params: {
                 // 此处注意，你的`params`应该是个对象，不能是其他数据类型
-                ...(config.params || {}),
+                // ...(config.params || {}),
                 // _: +new Date()
             }
         }
@@ -91,11 +91,12 @@ const GetAxios = () => {
 
     // Ajax 实体
     const Ajax: BaseAjax = {
-        get: function <T>(url: string, config: object = {}): Promise<BaseResponse<T>> {
+        get: function <T>(url: string, data: object = {}, config: object = {}): Promise<BaseResponse<T>> {
             return request<T>(
                 Object.assign({}, config, {
                     method: 'GET',
-                    url: url
+                    url: url,
+                    params: data
                 })
             );
         },
@@ -156,5 +157,4 @@ const GetAxios = () => {
 };
 
 export const Ajax: BaseAjax = GetAxios();
-export type PageResponse = any[];
 export default GetAxios;

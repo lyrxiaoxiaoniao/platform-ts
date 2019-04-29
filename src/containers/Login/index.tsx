@@ -1,14 +1,22 @@
 import React from 'react'
 import { ComponentExt } from '@utils/reactExt'
 import {
-  Form, Icon, Input, Button,
+  Form, Icon, Input, Button
 } from 'antd';
 import './index.scss'
+import { FormComponentProps } from 'antd/lib/form';
+import { inject, observer } from 'mobx-react'
 
-function hasErrors(fieldsError: Array<any>): boolean {
-  return Object.keys(fieldsError).some((field: any) => fieldsError[field]);
+interface IStoreProps extends IStore {}
+export interface fileds extends IUserStore.IUser{
+  [key: string]: any
 }
-class Login extends ComponentExt<any, any> {
+function hasErrors(fieldsError: fileds): boolean {
+  return Object.keys(fieldsError).some((field: string|any) => fieldsError[field]);
+}
+@inject('userStore')
+@observer
+class Login extends ComponentExt<FormComponentProps & IStoreProps, any> {
   componentDidMount() {
     // To disabled submit button at the beginning.
     this.props.form.validateFields();
@@ -18,17 +26,19 @@ class Login extends ComponentExt<any, any> {
     this.props.form.validateFields((err: any, values: any) => {
       if (!err) {
         console.log('Received values of form: ', values);
+        this.props.userStore.loginIn(values)
       }
-      this.props.history.push('/app/home')
+      // this.props.history.push('/app/home')
     });
   }
   render() {
+    console.log(this.props.userStore)
     const {
       getFieldDecorator, getFieldsError, getFieldError, isFieldTouched,
     } = this.props.form;
 
     // Only show error after a field is touched.
-    const userNameError = isFieldTouched('userName') && getFieldError('userName');
+    const userNameError = isFieldTouched('username') && getFieldError('username');
     const passwordError = isFieldTouched('password') && getFieldError('password');
     return (
       <div className="login">
@@ -38,7 +48,7 @@ class Login extends ComponentExt<any, any> {
             validateStatus={userNameError ? 'error' : ''}
             help={userNameError || ''}
           >
-            {getFieldDecorator('userName', {
+            {getFieldDecorator('username', {
               rules: [{ required: true, message: 'Please input your username!' }],
             })(
               <Input prefix={<Icon type="user" style={{ color: 'rgba(0,0,0,.25)' }} />} placeholder="Username" />
@@ -69,5 +79,5 @@ class Login extends ComponentExt<any, any> {
     );
   }
 }
-const adminLogin = Form.create({ name: 'admin_login' })(Login);
+const adminLogin = Form.create()(Login);
 export default adminLogin

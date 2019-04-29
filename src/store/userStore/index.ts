@@ -1,8 +1,8 @@
 import { observable, action } from 'mobx'
 import { StoreExt } from '@utils/reactExt'
+import md5 from 'js-md5'
 export class UserStore extends StoreExt {
-  @observable userName: string = ''
-  @observable token: string = ''
+  @observable userInfo: IUserStore.IUser = {}
   // constructor() {
   //   super()
   //   // this.token = ''
@@ -10,15 +10,22 @@ export class UserStore extends StoreExt {
   //   this.$Storage._localStorage.set('test', '111111')
   // }
   // 设置本地缓存
-  setLocalStorage({ userName, token }: IUserStore.IUser) {
-    this.$Storage._localStorage.set('userName', userName)
+  setLocalStorage(userInfo: IUserStore.IUser) {
+    const { token } = userInfo
+    this.$Storage._localStorage.set('userInfo', userInfo)
     this.$Storage._localStorage.set('token', token)
   }
   clearStorage() {
     this.$Storage._localStorage.clear()
   }
   @action
-  changeLoading() {}
+  loginIn = async (param: IUserStore.LoginParam) => {
+    try {
+      const { username, password } = param
+      const res = await this.$Http.post('/user/login', {username, password: md5(password)})
+      console.log(res, 'cehi')
+    } catch (error) {}
+  }
 }
-const userStore = new UserStore()
-export default userStore
+
+export default new UserStore()

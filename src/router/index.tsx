@@ -43,7 +43,7 @@ export default () => (
         <Route
           path='/'
           exact
-          render={() => <Redirect to='/app' push />}
+          render={() => <Redirect to='/login' push />}
         />
         {routerMap.map(item => (
           <Route
