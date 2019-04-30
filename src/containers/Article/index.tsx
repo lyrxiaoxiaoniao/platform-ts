@@ -1,37 +1,64 @@
 import './index.scss'
 import React from 'react'
 import { ComponentExt } from '@utils/reactExt'
-import MdEditor from 'react-markdown-editor-lite'
-const mock_content = "Hello.\n\n * This is markdown.\n * It is fun\n * Love it or leave it.Hello.\n\n * This is markdown.\n * It is fun\n * Love it or leave it.Hello.\n\n * This is markdown.\n * It is fun\n * Love it or leave it.Hello.\n\n * This is markdown.\n * It is fun\n * Love it or leave it.Hello.\n\n * This is markdown.\n * It is fun\n * Love it or leave it.Hello.\n\n * This is markdown.\n * It is fun\n * Love it or leave it."
-interface MdType {
-  [key: string]: any
+import { Table, Divider, Tag } from 'antd'
+import { ColumnProps } from 'antd/lib/table'
+import { inject, observer } from 'mobx-react'
+const columns: ColumnProps<any>[] = [
+  {
+    title: '标题',
+    dataIndex: 'title',
+    key: 'title'
+  },
+  {
+    title: '主图',
+    dataIndex: 'head_url',
+    key: 'head_url'
+  },
+  {
+    title: '创建时间',
+    dataIndex: 'createdAt',
+    key: 'createdAt'
+  },
+  {
+    title: '作者',
+    key: 'User.id',
+    dataIndex: 'User.username',
+    render: text => <Tag>{text}</Tag>
+  },
+  {
+    title: '操作',
+    key: 'action',
+    render: (text: string) => (
+      <span>
+        <a href='javascript:;'>Edit</a>
+        <Divider type='vertical' />
+        <a href='javascript:;'>Delete</a>
+      </span>
+    )
+  }
+]
+interface IStoreProps {
+  routerStore: RouterStore
+  articleStore: IArticleStore.ArticleStore
 }
-class Article extends ComponentExt {
-  public mdEditor: any
-  handleEditorChange({ html, md }: MdType) {
-    console.log('handleEditorChange', html, md)
-  }
-  handleGetMdValue = () => {
-    this.mdEditor && alert(this.mdEditor.getMdValue())
-  }
-  handleGetHtmlValue = () => {
-    this.mdEditor && alert(this.mdEditor.getHtmlValue())
+@inject('articleStore', 'routerStore')
+@observer
+class Article extends ComponentExt<IStoreProps> {
+  componentDidMount() {
+    this.props.articleStore.getList()
   }
   public render() {
+    const { listData } = this.props.articleStore
     return (
-      <div>
-        <nav>
-          <button onClick={this.handleGetMdValue} >getMdValue</button>
-          <button onClick={this.handleGetHtmlValue} >getHtmlValue</button>
-        </nav>
-        <MdEditor
-          ref={(node: any) => this.mdEditor = node}
-          style={{ minHeight: '300px' }}
-          value={mock_content}
-          onChange={this.handleEditorChange}
+      <>
+        <Table
+          columns={columns}
+          rowKey={record => record.id}
+          dataSource={listData.slice().map(v=>v)}
         />
-      </div>
-    );
+      </>
+    )
   }
 }
 export default Article

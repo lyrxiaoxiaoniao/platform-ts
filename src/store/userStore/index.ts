@@ -22,9 +22,15 @@ export class UserStore extends StoreExt {
   loginIn = async (param: IUserStore.LoginParam) => {
     try {
       const { username, password } = param
-      const res = await this.$Http.post('/user/login', {username, password: md5(password)})
-      console.log(res, 'cehi')
-    } catch (error) {}
+      const res = await this.api.loginApi.loginPOST({
+        username,
+        password: md5(password)
+      })
+      this.setLocalStorage(res.data.data)
+      return res
+    } catch (error) {
+      return error
+    }
   }
 }
 

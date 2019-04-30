@@ -11,7 +11,14 @@ export const routerList: Array<any> = [
     })
   },
   {
-    path: '/app/article',
+    path: '/app/article/add',
+    component: Loadable({
+      loader: () => import('@containers/Article/add'),
+      loading
+    })
+  },
+  {
+    path: '/app/article/list',
     component: Loadable({
       loader: () => import('@containers/Article'),
       loading

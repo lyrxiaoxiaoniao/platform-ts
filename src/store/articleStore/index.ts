@@ -1,9 +1,19 @@
-import { observable, action } from 'mobx'
+import { observable, action, runInAction } from 'mobx'
 import { StoreExt } from '@utils/reactExt'
 export class ArticleStore extends StoreExt {
-  @observable content: string = ''
-  @observable title: string = ''
+  @observable
+  listData: IArticleStore.IArticleList[] = []
   @action
-  change() {}
+  getList = async () => {
+    try {
+      const res = await this.api.articleApi.articleListGET()
+      runInAction(() => {
+        this.listData = res.data.data.map((v: any) => v)
+      })
+      return res
+    } catch (error) {
+      return error
+    }
+  }
 }
 export default new ArticleStore()

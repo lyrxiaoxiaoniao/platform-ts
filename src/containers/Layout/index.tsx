@@ -1,6 +1,7 @@
 import './index.scss'
 import React, { Component } from 'react'
-import { Route, withRouter } from 'react-router-dom'
+// import { Route, withRouter } from 'react-router-dom'
+import { Route } from 'react-router-dom'
 import { Layout, Icon, Avatar } from 'antd'
 import { routerList } from '@router/index'
 import Menus from '@components/layout/Menus'
@@ -65,4 +66,5 @@ class LayoutIndex extends Component<any, any> {
   }
 }
 
-export default withRouter(LayoutIndex)
+// export default withRouter(LayoutIndex)
+export default LayoutIndex

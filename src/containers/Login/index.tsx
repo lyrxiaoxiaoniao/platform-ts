@@ -1,57 +1,80 @@
 import React from 'react'
 import { ComponentExt } from '@utils/reactExt'
-import {
-  Form, Icon, Input, Button
-} from 'antd';
+import { Form, Icon, Input, Button } from 'antd'
 import './index.scss'
-import { FormComponentProps } from 'antd/lib/form';
+import { FormComponentProps } from 'antd/lib/form'
 import { inject, observer } from 'mobx-react'
 
-interface IStoreProps extends IStore {}
-export interface fileds extends IUserStore.IUser{
+interface IStoreProps {
+  routerStore: RouterStore
+  userStore: IUserStore.UserStore
+}
+export interface fileds extends IUserStore.IUser {
   [key: string]: any
 }
 function hasErrors(fieldsError: fileds): boolean {
-  return Object.keys(fieldsError).some((field: string|any) => fieldsError[field]);
+  return Object.keys(fieldsError).some(
+    (field: string | any) => fieldsError[field]
+  )
 }
-@inject('userStore')
+@inject('userStore', 'routerStore')
 @observer
 class Login extends ComponentExt<FormComponentProps & IStoreProps, any> {
   componentDidMount() {
     // To disabled submit button at the beginning.
-    this.props.form.validateFields();
+    this.props.form.validateFields()
+  }
+  componentWillMount() {
+    if (this.$Storage._localStorage.get('token')) {
+      this.props.routerStore.history.push('/app/home')
+      return
+    }
   }
   handleSubmit = (e: any) => {
-    e.preventDefault();
+    e.preventDefault()
     this.props.form.validateFields((err: any, values: any) => {
       if (!err) {
-        console.log('Received values of form: ', values);
-        this.props.userStore.loginIn(values)
+        this.props.userStore.loginIn(values).then(res => {
+          if (res.success) {
+            this.props.routerStore.history.push('/app/home')
+          }
+        })
       }
-      // this.props.history.push('/app/home')
-    });
+    })
   }
   render() {
-    console.log(this.props.userStore)
+    console.log(this.props.routerStore, this.props)
     const {
-      getFieldDecorator, getFieldsError, getFieldError, isFieldTouched,
-    } = this.props.form;
+      getFieldDecorator,
+      getFieldsError,
+      getFieldError,
+      isFieldTouched
+    } = this.props.form
 
     // Only show error after a field is touched.
-    const userNameError = isFieldTouched('username') && getFieldError('username');
-    const passwordError = isFieldTouched('password') && getFieldError('password');
+    const userNameError =
+      isFieldTouched('username') && getFieldError('username')
+    const passwordError =
+      isFieldTouched('password') && getFieldError('password')
     return (
-      <div className="login">
-        <Form onSubmit={this.handleSubmit} className="login-form">
+      <div className='login'>
+        <Form onSubmit={this.handleSubmit} className='login-form'>
           <h2>admin platForm</h2>
           <Form.Item
             validateStatus={userNameError ? 'error' : ''}
             help={userNameError || ''}
           >
             {getFieldDecorator('username', {
-              rules: [{ required: true, message: 'Please input your username!' }],
+              rules: [
+                { required: true, message: 'Please input your username!' }
+              ]
             })(
-              <Input prefix={<Icon type="user" style={{ color: 'rgba(0,0,0,.25)' }} />} placeholder="Username" />
+              <Input
+                prefix={
+                  <Icon type='user' style={{ color: 'rgba(0,0,0,.25)' }} />
+                }
+                placeholder='Username'
+              />
             )}
           </Form.Item>
           <Form.Item
@@ -59,25 +82,33 @@ class Login extends ComponentExt<FormComponentProps & IStoreProps, any> {
             help={passwordError || ''}
           >
             {getFieldDecorator('password', {
-              rules: [{ required: true, message: 'Please input your Password!' }],
+              rules: [
+                { required: true, message: 'Please input your Password!' }
+              ]
             })(
-              <Input prefix={<Icon type="lock" style={{ color: 'rgba(0,0,0,.25)' }} />} type="password" placeholder="Password" />
+              <Input
+                prefix={
+                  <Icon type='lock' style={{ color: 'rgba(0,0,0,.25)' }} />
+                }
+                type='password'
+                placeholder='Password'
+              />
             )}
           </Form.Item>
           <Form.Item>
             <Button
               style={{ width: '100%' }}
-              type="primary"
-              htmlType="submit"
+              type='primary'
+              htmlType='submit'
               disabled={hasErrors(getFieldsError())}
             >
               Login
-          </Button>
+            </Button>
           </Form.Item>
         </Form>
       </div>
-    );
+    )
   }
 }
-const adminLogin = Form.create()(Login);
+const adminLogin = Form.create()(Login)
 export default adminLogin
