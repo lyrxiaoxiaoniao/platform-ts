@@ -19,14 +19,17 @@ function hasErrors(fieldsError: fileds): boolean {
 }
 @inject('userStore', 'routerStore')
 @observer
-class Login extends ComponentExt<FormComponentProps & IStoreProps, any> {
-  componentDidMount() {
-    // To disabled submit button at the beginning.
-    this.props.form.validateFields()
-  }
+class Login extends ComponentExt<FormComponentProps & IStoreProps & RouterStore, any> {
+  // componentDidMount() {
+  //   if (this.$Storage._localStorage.get('token')) {
+  //     console.log(this.props)
+  //     this.props.routerStore.history.replace('/app/home')
+  //     return
+  //   }
+  // }
   componentWillMount() {
     if (this.$Storage._localStorage.get('token')) {
-      this.props.routerStore.history.push('/app/home')
+      this.props.routerStore.history.replace('/app/home')
       return
     }
   }
@@ -36,14 +39,13 @@ class Login extends ComponentExt<FormComponentProps & IStoreProps, any> {
       if (!err) {
         this.props.userStore.loginIn(values).then(res => {
           if (res.success) {
-            this.props.routerStore.history.push('/app/home')
+            this.props.routerStore.history.replace('/app/home')
           }
         })
       }
     })
   }
   render() {
-    console.log(this.props.routerStore, this.props)
     const {
       getFieldDecorator,
       getFieldsError,
@@ -63,6 +65,7 @@ class Login extends ComponentExt<FormComponentProps & IStoreProps, any> {
           <Form.Item
             validateStatus={userNameError ? 'error' : ''}
             help={userNameError || ''}
+            hasFeedback
           >
             {getFieldDecorator('username', {
               rules: [
@@ -80,6 +83,7 @@ class Login extends ComponentExt<FormComponentProps & IStoreProps, any> {
           <Form.Item
             validateStatus={passwordError ? 'error' : ''}
             help={passwordError || ''}
+            hasFeedback
           >
             {getFieldDecorator('password', {
               rules: [

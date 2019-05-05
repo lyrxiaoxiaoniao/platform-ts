@@ -1,5 +1,6 @@
 import React from 'react'
 import { HashRouter as Router, Switch, Route, Redirect } from 'react-router-dom'
+// import { BrowserRouter as Router, Switch, Route, Redirect } from 'react-router-dom'
 import Loadable from 'react-loadable'
 import loading from '@router/Loading'
 export const routerList: Array<any> = [

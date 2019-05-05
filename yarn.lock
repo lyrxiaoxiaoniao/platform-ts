@@ -6937,7 +6937,7 @@ mobx-react-devtools@^6.1.1:
 
 mobx-react-router@^4.0.7:
   version "4.0.7"
-  resolved "http://registry.npm.taobao.org/mobx-react-router/download/mobx-react-router-4.0.7.tgz#d248a0e0525049f0e37e94f2fb1ab09563be4c35"
+  resolved "https://registry.npm.taobao.org/mobx-react-router/download/mobx-react-router-4.0.7.tgz#d248a0e0525049f0e37e94f2fb1ab09563be4c35"
   integrity sha1-0kig4FJQSfDjfpTy+xqwlWO+TDU=
 
 mobx-react@^5.4.3:

@@ -1,7 +1,7 @@
 import './index.scss'
 import React from 'react'
 import { ComponentExt } from '@utils/reactExt'
-import { Table, Divider, Tag } from 'antd'
+import { Table, Divider, Tag, Avatar, Icon } from 'antd'
 import { ColumnProps } from 'antd/lib/table'
 import { inject, observer } from 'mobx-react'
 const columns: ColumnProps<any>[] = [
@@ -13,27 +13,32 @@ const columns: ColumnProps<any>[] = [
   {
     title: '主图',
     dataIndex: 'head_url',
-    key: 'head_url'
+    key: 'head_url',
+    width: 100,
+    render: (text: string) => <Avatar src={text} />
   },
   {
     title: '创建时间',
     dataIndex: 'createdAt',
+    width: 250,
     key: 'createdAt'
   },
   {
     title: '作者',
     key: 'User.id',
     dataIndex: 'User.username',
-    render: text => <Tag>{text}</Tag>
+    width: 100,
+    render: text => <Tag color='green'>{text}</Tag>
   },
   {
     title: '操作',
     key: 'action',
+    width: 100,
     render: (text: string) => (
       <span>
-        <a href='javascript:;'>Edit</a>
+        <Icon type='edit' />
         <Divider type='vertical' />
-        <a href='javascript:;'>Delete</a>
+        <Icon type='delete' />
       </span>
     )
   }
@@ -55,7 +60,7 @@ class Article extends ComponentExt<IStoreProps> {
         <Table
           columns={columns}
           rowKey={record => record.id}
-          dataSource={listData.slice().map(v=>v)}
+          dataSource={listData.slice().map(v => v)}
         />
       </>
     )

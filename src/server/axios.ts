@@ -1,7 +1,9 @@
 import Axios, { AxiosInstance, AxiosRequestConfig } from 'axios';
 import localStorage from "@utils/localStorage"
+import { message } from 'antd'
+import api from '@server/api/config'
 // 接口前缀
-const BASE_URL = "http://localhost:3000/api"
+const BASE_URL = api.baseUrl
 const setToken:()=>object = () => {
     const token = localStorage.get('token') || ''
     return token ? { Authorization: `Bearer ${token}` } : {}
@@ -13,18 +15,19 @@ const getAxiosInstance = (): AxiosInstance => {
     });
     instance.defaults.headers = {
         'X-Requested-With': 'XMLHttpRequest',
-        ...setToken(),
+        // ...setToken(),
     }
-    instance.defaults.timeout = 3500
+    instance.defaults.timeout = 10000
     instance.interceptors.request.use((config) => {
-        // const token = setToken()
-        // const {headers} = config
-        // if ("Authorization" in token) {
-        //     delete headers.Authorization
-        // }
+        const token = setToken()
+        let { headers } = config
+        headers = {
+            ...headers,
+            ...token
+        }
         return {
             ...config,
-            // headers,
+            headers,
             params: {
                 // 此处注意，你的`params`应该是个对象，不能是其他数据类型
                 // ...(config.params || {}),
@@ -35,6 +38,13 @@ const getAxiosInstance = (): AxiosInstance => {
 
     instance.interceptors.response.use(
         (response) => {
+            if (response && response.data.code == 401) {
+                message.warning('请重新登录')
+                localStorage.remove('userInfo')
+                localStorage.remove('token')
+                window.location.href = '#/login'
+                return Promise.reject('请重新登录！');
+            }
             if (response && response.data) {
                 return Promise.resolve(response);
             } else {
@@ -65,11 +75,11 @@ interface BaseResponse<T> {
 interface BaseAjax {
     get: <T>(url: string, config?: object) => Promise<BaseResponse<T>>;
     delete: <T>(url: string, config?: object) => Promise<BaseResponse<T>>;
-    head: <T>(url: string, config?: object) => Promise<BaseResponse<T>>;
-    options: <T>(url: string, config?: object) => Promise<BaseResponse<T>>;
     post: <T>(url: string, data?: object, config?: object) => Promise<BaseResponse<T>>;
     put: <T>(url: string, data?: object, config?: object) => Promise<BaseResponse<T>>;
-    patch: <T>(url: string, data?: object, config?: object) => Promise<BaseResponse<T>>;
+    // head: <T>(url: string, config?: object) => Promise<BaseResponse<T>>;
+    // options: <T>(url: string, config?: object) => Promise<BaseResponse<T>>;
+    // patch: <T>(url: string, data?: object, config?: object) => Promise<BaseResponse<T>>;
 }
 
 // 获取一个 Ajax 实例
@@ -108,22 +118,6 @@ const GetAxios = () => {
                 })
             );
         },
-        head: function <T>(url: string, config: object = {}): Promise<BaseResponse<T>> {
-            return request<T>(
-                Object.assign({}, config, {
-                    method: 'HEAD',
-                    url: url
-                })
-            );
-        },
-        options: function <T>(url: string, config: object = {}): Promise<BaseResponse<T>> {
-            return request<T>(
-                Object.assign({}, config, {
-                    method: 'OPTIONS',
-                    url: url
-                })
-            );
-        },
         post: function <T>(url: string, data: object = {}, config: object = {}): Promise<BaseResponse<T>> {
             return request<T>(
                 Object.assign({}, config, {
@@ -141,16 +135,32 @@ const GetAxios = () => {
                     data: data
                 })
             );
-        },
-        patch: function <T>(url: string, data: object = {}, config: object = {}): Promise<BaseResponse<T>> {
-            return request<T>(
-                Object.assign({}, config, {
-                    method: 'PATCH',
-                    url: url,
-                    data: data
-                })
-            );
         }
+        // head: function <T>(url: string, config: object = {}): Promise<BaseResponse<T>> {
+        //     return request<T>(
+        //         Object.assign({}, config, {
+        //             method: 'HEAD',
+        //             url: url
+        //         })
+        //     );
+        // },
+        // options: function <T>(url: string, config: object = {}): Promise<BaseResponse<T>> {
+        //     return request<T>(
+        //         Object.assign({}, config, {
+        //             method: 'OPTIONS',
+        //             url: url
+        //         })
+        //     );
+        // },
+        // patch: function <T>(url: string, data: object = {}, config: object = {}): Promise<BaseResponse<T>> {
+        //     return request<T>(
+        //         Object.assign({}, config, {
+        //             method: 'PATCH',
+        //             url: url,
+        //             data: data
+        //         })
+        //     );
+        // }
     };
 
     return Ajax;

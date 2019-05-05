@@ -1,13 +1,13 @@
 import './index.scss'
-import React, { Component } from 'react'
-// import { Route, withRouter } from 'react-router-dom'
+import React from 'react'
+import { ComponentExt } from '@utils/reactExt'
 import { Route } from 'react-router-dom'
 import { Layout, Icon, Avatar } from 'antd'
 import { routerList } from '@router/index'
 import Menus from '@components/layout/Menus'
 import menus from '@router/menus'
 const { Header, Sider, Content } = Layout
-class LayoutIndex extends Component<any, any> {
+class LayoutIndex extends ComponentExt<any, any> {
   constructor(props: any) {
     super(props)
   }
@@ -22,9 +22,17 @@ class LayoutIndex extends Component<any, any> {
   }
 
   render() {
+    const userinfo = this.$Storage._localStorage.get('userInfo') || {
+      username: 'admin'
+    }
     return (
       <Layout style={{ height: '100%' }}>
-        <Sider style={{ position: 'fixed', zIndex: 1, height: '100%' }} trigger={null} collapsible collapsed={this.state.collapsed}>
+        <Sider
+          style={{ position: 'fixed', zIndex: 1, height: '100%' }}
+          trigger={null}
+          collapsible
+          collapsed={this.state.collapsed}
+        >
           <div className='logo' />
           <Menus
             menus={menus}
@@ -32,21 +40,36 @@ class LayoutIndex extends Component<any, any> {
             theme='dark'
             inlineCollapsed={this.state.collapsed}
             selectedKeys={[this.props.location.pathname]}
-          ></Menus>
+          />
         </Sider>
         <Layout>
-          <Header style={{ background: '#fff', paddingLeft: (this.state.collapsed) ? '80px' : '200px', position: 'fixed', width: '100%', boxShadow: '1px 1px 1px 1px #99999924' }}>
+          <Header
+            style={{
+              background: '#fff',
+              paddingLeft: this.state.collapsed ? '80px' : '200px',
+              position: 'fixed',
+              width: '100%',
+              boxShadow: '1px 1px 1px 1px #99999924'
+            }}
+          >
             <Icon
               className='trigger'
               type={this.state.collapsed ? 'menu-unfold' : 'menu-fold'}
               onClick={this.toggle}
             />
-            <Avatar style={{ backgroundColor: "#7265e6", verticalAlign: 'middle'}} className='avatar'>
-              xiao_liu
+            <Avatar
+              style={{ backgroundColor: '#7265e6', verticalAlign: 'middle' }}
+              className='avatar'
+            >
+              {userinfo.username || 'admin'}
             </Avatar>
           </Header>
           <Content
-            style={{ margin: '85px 16px 24px 16px', overflow: 'initial', paddingLeft: (this.state.collapsed) ? '80px' : '200px' }}
+            style={{
+              margin: '85px 16px 24px 16px',
+              overflow: 'initial',
+              paddingLeft: this.state.collapsed ? '80px' : '200px'
+            }}
           >
             <div style={{ padding: 24, background: '#fff' }}>
               {routerList.map(({ path, key, exact, component, ...props }) => (
