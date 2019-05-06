@@ -59,6 +59,37 @@ class AddArticleForm extends ComponentExt<FormComponentProps & Iprops, any> {
       })
     }
   }
+  handleImageUpload = (file: any, callback: any) => {
+    const reader = new FileReader()
+    reader.onload = () => {
+      const dataURItoBlob = (dataURI: any) => {
+        var byteString = atob(dataURI.split(',')[1])
+        var mimeString = dataURI
+          .split(',')[0]
+          .split(':')[1]
+          .split(';')[0]
+        var ab = new ArrayBuffer(byteString.length)
+        var ia = new Uint8Array(ab)
+        for (var i = 0; i < byteString.length; i++) {
+          ia[i] = byteString.charCodeAt(i)
+        }
+        return new Blob([ab], { type: mimeString })
+      }
+      const blob = dataURItoBlob(reader.result)
+      const fd = new FormData()
+      fd.append('file', blob)
+      this.$Http
+        .post(this.api.serverUri.uploadAPi, fd, {
+          headers: { 'Content-Type': 'multipart/form-data' }
+        })
+        .then((res: any) => {
+          if (res.success) {
+            callback(res.data.files[0])
+          }
+        })
+    }
+    reader.readAsDataURL(file)
+  }
   normFile = (e: any) => {
     if (Array.isArray(e)) {
       return e
@@ -70,10 +101,13 @@ class AddArticleForm extends ComponentExt<FormComponentProps & Iprops, any> {
     this.props.form.validateFields((err, values) => {
       if (!err) {
         const data1 = {
-          ...values,
+          title: values.title,
           head_url: this.state.head_url,
-          content: this.handleGetHtmlValue()
+          content: this.handleGetMdValue()
         }
+        this.props.articleStore.addArticle(data1).then(res => {
+          console.log(res, '111111111')
+        })
         console.log('Received values of form: ', data1)
       }
     })
@@ -139,22 +173,23 @@ class AddArticleForm extends ComponentExt<FormComponentProps & Iprops, any> {
           <Form.Item label='文章内容'>
             <MdEditor
               ref={(node: any) => (this.mdEditor = node)}
-              style={{ minHeight: '300px' }}
+              style={{ height: '350px' }}
               value={content}
               onChange={this.handleEditorChange}
+              onImageUpload={this.handleImageUpload}
             />
           </Form.Item>
           <Form.Item>
             <Button type='primary' htmlType='submit'>
               新增文章
             </Button>
-            <Button
+            {/* <Button
               onClick={(e: any) => {
                 this.handleSubmit(e, '1')
               }}
             >
               保存文章
-            </Button>
+            </Button> */}
           </Form.Item>
         </Form>
         {/* <div dangerouslySetInnerHTML={{__html: '<p><strong>123</strong></p><h1>123123123</h1>'}}></div> */}

@@ -1,41 +1,200 @@
 import React from 'react'
 import { ComponentExt } from '@utils/reactExt'
 import MdEditor from 'react-markdown-editor-lite'
-const mock_content = "Hello.\n\n * This is markdown.\n * It is fun\n * Love it or leave it.Hello.\n\n * This is markdown.\n * It is fun\n * Love it or leave it.Hello.\n\n * This is markdown.\n * It is fun\n * Love it or leave it.Hello.\n\n * This is markdown.\n * It is fun\n * Love it or leave it.Hello.\n\n * This is markdown.\n * It is fun\n * Love it or leave it.Hello.\n\n * This is markdown.\n * It is fun\n * Love it or leave it."
+import { Form, Input, Upload, Icon, message, Button } from 'antd'
+import { FormComponentProps } from 'antd/lib/form'
+import { observer, inject } from 'mobx-react'
 interface MdType {
   [key: string]: any
 }
-class AddArticle extends ComponentExt {
+interface Iprops {
+  routerStore: RouterStore
+  articleStore: IArticleStore.ArticleStore
+  [key: string]: any
+}
+// 上传图片
+function beforeUpload(file: any) {
+  const isJPG = file.type === 'image/jpeg' || file.type === 'image/png'
+  if (!isJPG) {
+    message.error('You can only upload JPG file!')
+  }
+  const isLt2M = file.size / 1024 / 1024 < 5
+  if (!isLt2M) {
+    message.error('Image must smaller than 5MB!')
+  }
+  return isJPG && isLt2M
+}
+@inject('routerStore', 'articleStore')
+@observer
+class AddArticleForm extends ComponentExt<FormComponentProps & Iprops, any> {
+  state = {
+    loading: false,
+    content: '',
+    head_url: '',
+    title: ''
+  }
   componentDidMount() {
-    this.$Http.get('/test').then(res => {
-      console.log(res)
+    const { params } = this.props.match
+    this.props.articleStore.findArticle(params).then(res => {
+      const { article } = this.props.articleStore
+      this.setState({
+        content: article.content,
+        head_url: article.head_url,
+        title: article.title
+      })
     })
   }
   public mdEditor: any
-  handleEditorChange({ html, md }: MdType) {
-    console.log('handleEditorChange', html, md)
+  handleEditorChange = ({ html, md }: MdType) => {
+    // console.log('handleEditorChange', html, md, this.handleGetMdValue())
   }
   handleGetMdValue = () => {
-    this.mdEditor && alert(this.mdEditor.getMdValue())
+    return this.mdEditor && this.mdEditor.getMdValue()
   }
   handleGetHtmlValue = () => {
-    this.mdEditor && alert(this.mdEditor.getHtmlValue())
+    return this.mdEditor && this.mdEditor.getHtmlValue()
+  }
+  handleChange = (info: any) => {
+    if (info.file.status === 'uploading') {
+      this.setState({ loading: true })
+      return
+    }
+    if (info.file.status === 'done') {
+      // Get this url from response in real world.
+      this.setState({
+        head_url: info.file.response.data.files[0],
+        loading: false
+      })
+    }
+  }
+  handleImageUpload = (file: any, callback: any) => {
+    const reader = new FileReader()
+    reader.onload = () => {
+      const dataURItoBlob = (dataURI: any) => {
+        var byteString = atob(dataURI.split(',')[1])
+        var mimeString = dataURI
+          .split(',')[0]
+          .split(':')[1]
+          .split(';')[0]
+        var ab = new ArrayBuffer(byteString.length)
+        var ia = new Uint8Array(ab)
+        for (var i = 0; i < byteString.length; i++) {
+          ia[i] = byteString.charCodeAt(i)
+        }
+        return new Blob([ab], { type: mimeString })
+      }
+      const blob = dataURItoBlob(reader.result)
+      const fd = new FormData()
+      fd.append('file', blob)
+      this.$Http
+        .post(this.api.serverUri.uploadAPi, fd, {
+          headers: { 'Content-Type': 'multipart/form-data' }
+        })
+        .then((res: any) => {
+          if (res.success) {
+            callback(res.data.files[0])
+          }
+        })
+    }
+    reader.readAsDataURL(file)
+  }
+  normFile = (e: any) => {
+    if (Array.isArray(e)) {
+      return e
+    }
+    return e && e.fileList
+  }
+  handleSubmit = (e: any, str?: any) => {
+    e.preventDefault()
+    this.props.form.validateFields((err, values) => {
+      if (!err) {
+        const { article } = this.props.articleStore
+        const data1 = {
+          id: article.id,
+          title: values.title,
+          head_url: this.state.head_url,
+          content: this.handleGetMdValue()
+        }
+        this.props.articleStore.editArticle(data1).then(res => {
+          console.log(res, '111111111')
+        })
+      }
+    })
   }
   public render() {
+    const { getFieldDecorator } = this.props.form
+    const { content, head_url, title } = this.state
+    const uploadButton = (
+      <div>
+        <Icon type={this.state.loading ? 'loading' : 'plus'} />
+        <div className='ant-upload-text'>Upload</div>
+      </div>
+    )
     return (
       <div>
-        <nav>
-          <button onClick={this.handleGetMdValue} >getMdValue</button>
-          <button onClick={this.handleGetHtmlValue} >getHtmlValue</button>
-        </nav>
-        <MdEditor
-          ref={(node: any) => this.mdEditor = node}
-          style={{ minHeight: '300px' }}
-          value={mock_content}
-          onChange={this.handleEditorChange}
-        />
+        <Form onSubmit={this.handleSubmit}>
+          <Form.Item label='文章标题'>
+            {getFieldDecorator('title', {
+              initialValue: title,
+              rules: [
+                {
+                  required: true,
+                  message: '请输入文章标题!'
+                }
+              ]
+            })(<Input />)}
+          </Form.Item>
+          <Form.Item label='文章主图'>
+            {getFieldDecorator('upload', {
+              valuePropName: 'fileList',
+              getValueFromEvent: this.normFile
+            })(
+              <Upload
+                name='file'
+                action={this.api.serverUri.uploadAPi}
+                listType='picture-card'
+                showUploadList={false}
+                beforeUpload={beforeUpload}
+                onChange={this.handleChange}
+              >
+                {head_url ? (
+                  <img
+                    src={head_url}
+                    style={{ width: '150px', height: 'auto' }}
+                    alt='avatar'
+                  />
+                ) : (
+                  uploadButton
+                )}
+              </Upload>
+            )}
+          </Form.Item>
+          <Form.Item label='文章内容'>
+            <MdEditor
+              ref={(node: any) => (this.mdEditor = node)}
+              style={{ height: '350px' }}
+              value={content}
+              onChange={this.handleEditorChange}
+              onImageUpload={this.handleImageUpload}
+            />
+          </Form.Item>
+          <Form.Item>
+            <Button type='primary' htmlType='submit'>
+              更新文章
+            </Button>
+            {/* <Button
+              onClick={(e: any) => {
+                this.handleSubmit(e, '1')
+              }}
+            >
+              保存文章
+            </Button> */}
+          </Form.Item>
+        </Form>
+        {/* <div dangerouslySetInnerHTML={{__html: '<p><strong>123</strong></p><h1>123123123</h1>'}}></div> */}
       </div>
-    );
+    )
   }
 }
+const AddArticle = Form.create()(AddArticleForm)
 export default AddArticle

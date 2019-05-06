@@ -28,7 +28,7 @@ class LayoutIndex extends ComponentExt<any, any> {
     return (
       <Layout style={{ height: '100%' }}>
         <Sider
-          style={{ position: 'fixed', zIndex: 1, height: '100%' }}
+          style={{ position: 'fixed', zIndex: 2, height: '100%' }}
           trigger={null}
           collapsible
           collapsed={this.state.collapsed}
@@ -49,6 +49,7 @@ class LayoutIndex extends ComponentExt<any, any> {
               paddingLeft: this.state.collapsed ? '80px' : '200px',
               position: 'fixed',
               width: '100%',
+              zIndex: 1,
               boxShadow: '1px 1px 1px 1px #99999924'
             }}
           >

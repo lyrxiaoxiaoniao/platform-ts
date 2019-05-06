@@ -32,6 +32,26 @@ const menus = [
         icon: ''
       }
     ]
+  },
+  {
+    key: '/app/tag',
+    link: '/app/tag',
+    title: '标签',
+    icon: 'home',
+    child: [
+      // {
+      //   key: '/app/article/add',
+      //   link: '/app/article/add',
+      //   title: '新增',
+      //   icon: ''
+      // },
+      {
+        key: '/app/tag/list',
+        link: '/app/tag/list',
+        title: '列表',
+        icon: ''
+      }
+    ]
   }
 ]
 

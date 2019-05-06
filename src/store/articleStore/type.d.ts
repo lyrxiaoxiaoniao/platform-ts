@@ -4,12 +4,13 @@ export as namespace IArticleStore
 
 export interface ArticleStore extends ArticleStoreModel {}
 
-export interface IArticleList {
-    [key: string|number]: any
-}
 export interface IArticle {
-    title: string
-    content: string
-    head_url: string
-    [key: string|number]: any
+  id?: string | number
+  title: string
+  content: string
+  head_url: string
+  [key: string | number]: any
+}
+export interface IArticleID {
+  id: string | number
 }
