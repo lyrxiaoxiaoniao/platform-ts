@@ -107,8 +107,11 @@ class AddArticleForm extends ComponentExt<FormComponentProps & Iprops, any> {
         }
         this.props.articleStore.addArticle(data1).then(res => {
           console.log(res, '111111111')
+          if (res.success) {
+            this.$message.success(res.data.message)
+            this.props.routerStore.history.push('/app/article/list')
+          }
         })
-        console.log('Received values of form: ', data1)
       }
     })
   }

@@ -31,11 +31,17 @@ class Article extends ComponentExt<IStoreProps & RouterStore> {
       width: 100,
       render: (text: string) => <Avatar src={text} />
     },
+    // {
+    //   title: '创建时间',
+    //   dataIndex: 'createdAt',
+    //   width: 250,
+    //   key: 'createdAt'
+    // },
     {
-      title: '创建时间',
-      dataIndex: 'createdAt',
+      title: '更新时间',
+      dataIndex: 'updatedAt',
       width: 250,
-      key: 'createdAt'
+      key: 'updatedAt'
     },
     {
       title: '作者',
