@@ -13,7 +13,7 @@ class Home extends Component<IStoreProps> {
   public render() {
     const props = {
       name: 'file',
-      action: 'http://localhost:3000/api/upload',
+      action: 'http://192.168.40.130:3000/api/upload',
       multiple: true,
       onChange(info: any) {
         if (info.file.status !== 'uploading') {

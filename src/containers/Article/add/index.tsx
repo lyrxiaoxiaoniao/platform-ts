@@ -1,7 +1,7 @@
 import React from 'react'
 import { ComponentExt } from '@utils/reactExt'
 import MdEditor from 'react-markdown-editor-lite'
-import { Form, Input, Upload, Icon, message, Button } from 'antd'
+import { Form, Input, Upload, Icon, message, Button, Select } from 'antd'
 import { FormComponentProps } from 'antd/lib/form'
 import { observer, inject } from 'mobx-react'
 interface MdType {
@@ -10,6 +10,7 @@ interface MdType {
 interface Iprops {
   routerStore: RouterStore
   articleStore: IArticleStore.ArticleStore
+  tagStore: ITagStore.TagStore
 }
 // 上传图片
 function beforeUpload(file: any) {
@@ -23,7 +24,7 @@ function beforeUpload(file: any) {
   }
   return isJPG && isLt2M
 }
-@inject('routerStore', 'articleStore')
+@inject('routerStore', 'articleStore', 'tagStore')
 @observer
 class AddArticleForm extends ComponentExt<FormComponentProps & Iprops, any> {
   state = {
@@ -32,9 +33,7 @@ class AddArticleForm extends ComponentExt<FormComponentProps & Iprops, any> {
     head_url: ''
   }
   componentDidMount() {
-    // this.$Http.get('/test').then(res => {
-    //   console.log(res)
-    // })
+    this.props.tagStore.getList()
   }
   public mdEditor: any
   handleEditorChange = ({ html, md }: MdType) => {
@@ -101,12 +100,12 @@ class AddArticleForm extends ComponentExt<FormComponentProps & Iprops, any> {
     this.props.form.validateFields((err, values) => {
       if (!err) {
         const data1 = {
+          tagIds: values.tagIds,
           title: values.title,
           head_url: this.state.head_url,
           content: this.handleGetMdValue()
         }
         this.props.articleStore.addArticle(data1).then(res => {
-          console.log(res, '111111111')
           if (res.success) {
             this.$message.success(res.data.message)
             this.props.routerStore.history.push('/app/article/list')
@@ -116,6 +115,7 @@ class AddArticleForm extends ComponentExt<FormComponentProps & Iprops, any> {
     })
   }
   public render() {
+    const { listData } = this.props.tagStore
     const {
       getFieldDecorator
       // getFieldsError,
@@ -140,7 +140,26 @@ class AddArticleForm extends ComponentExt<FormComponentProps & Iprops, any> {
                   message: '请输入文章标题!'
                 }
               ]
-            })(<Input />)}
+            })(<Input placeholder='请输入文章标题!'/>)}
+          </Form.Item>
+          <Form.Item label='文章标签'>
+            {getFieldDecorator('tagIds', {
+              rules: [
+                {
+                  required: true,
+                  message: '请选择文章标签！',
+                  type: 'array'
+                }
+              ]
+            })(
+              <Select mode='multiple' placeholder='请选择文章标签！'>
+                {listData.map(
+                  (v: ITagStore.ITag): any => (
+                    <Select.Option key={v.id} value={v.id}>{v.label}</Select.Option>
+                  )
+                )}
+              </Select>
+            )}
           </Form.Item>
           <Form.Item label='文章主图'>
             {getFieldDecorator('upload', {

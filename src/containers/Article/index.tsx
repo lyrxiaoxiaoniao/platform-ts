@@ -31,12 +31,14 @@ class Article extends ComponentExt<IStoreProps & RouterStore> {
       width: 100,
       render: (text: string) => <Avatar src={text} />
     },
-    // {
-    //   title: '创建时间',
-    //   dataIndex: 'createdAt',
-    //   width: 250,
-    //   key: 'createdAt'
-    // },
+    {
+      title: '标签',
+      dataIndex: 'Tags',
+      // width: 250,
+      key: 'Tags',
+      render: (text: any) =>
+        text.map((v: any) => <Tag color='volcano' key={v.label}>{v.label}</Tag>)
+    },
     {
       title: '更新时间',
       dataIndex: 'updatedAt',

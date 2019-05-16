@@ -9,6 +9,7 @@ export interface IArticle {
   title: string
   content: string
   head_url: string
+  Tags?: Array[any]
   [key: string | number]: any
 }
 export interface IArticleID {

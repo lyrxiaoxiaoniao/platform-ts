@@ -43,7 +43,7 @@ const getAxiosInstance = (): AxiosInstance => {
                 localStorage.remove('userInfo')
                 localStorage.remove('token')
                 window.location.href = '#/login'
-                return Promise.reject('请重新登录！');
+                // return Promise.reject('请重新登录！');
             }
             if (response && response.data) {
                 return Promise.resolve(response);

@@ -53,7 +53,10 @@ export class ArticleStore extends StoreExt {
   deleteArticle = async (data: IArticleStore.IArticleID) => {
     try {
       const res = await this.api.articleApi.articleDELETE(data)
-      this.getList()
+      if (res.success) {
+        this.$message.success(res.data.message)
+        this.getList()
+      }
       return res
     } catch (error) {
       return error
