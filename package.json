@@ -2,6 +2,7 @@
   "name": "platform-ts",
   "version": "0.1.0",
   "private": true,
+  "homepage": "./",
   "devDependencies": {
     "@types/js-md5": "^0.4.2",
     "@types/react-loadable": "^5.5.1",
